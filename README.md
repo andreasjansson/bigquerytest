@@ -15,7 +15,7 @@ class TestGithubQuery(BigQueryTestCase):
     project = 'CHANGEME'
     dataset = 'CHANGEME'
 
-    def testGithubQuery(self):
+    def test_github_query(self):
 
         sql = '''
             SELECT
