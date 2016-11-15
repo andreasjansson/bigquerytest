@@ -1,3 +1,4 @@
+import logging
 import json
 from StringIO import StringIO
 import re
@@ -43,6 +44,7 @@ class BigQueryTestCase(unittest.TestCase):
         self.addTypeEqualityFunc(BigQueryTestTable, 'assert_tables_equal')
         self._mock_tables = {}
         self._bigquery_client = bigquery.Client(project=self.project)
+        self._log = logging.getLogger('bigquerytest')
 
     def mock_table(self, table_id, table_definition, cleanup=True):
         schema = self._load_schema(table_id)
@@ -59,8 +61,7 @@ class BigQueryTestCase(unittest.TestCase):
         query = self._bigquery_client.run_sync_query(sql)
         query.use_legacy_sql = self.use_legacy_sql
         query.run()
-        while query.job.state != 'DONE':
-            query.job.reload()
+        query_fetch_data(self._bigquery_client, query)
         return table_from_executed_query(query)
 
     def assert_tables_equal(self, actual, expected):
@@ -85,9 +86,11 @@ class BigQueryTestCase(unittest.TestCase):
         bq_schema = table.get_bigquery_schema()
         bq_table = self._table(mock_table_name, bq_schema)
         if bq_table.exists():
+            self._log.info('Table already exists, not creating: %s', mock_table_name)
             return
 
         bq_table.create()
+        self._log.debug('Creating table: %s', mock_table_name)
         while not bq_table.exists():
             bq_table.reload()
             time.sleep(5)
@@ -96,12 +99,15 @@ class BigQueryTestCase(unittest.TestCase):
         op = bq_table.upload_from_file(
             f, 'NEWLINE_DELIMITED_JSON', size=f.len)
 
+        self._log.debug('Uploading data to table: %s', mock_table_name)
         while op.state != 'DONE':
             op.reload()
+            time.sleep(5)
 
     def _delete_table(self, table_name):
         table = self._table(table_name)
-        table.create()
+        table.delete()
+        self._log.debug('Deleting table: %s', table_name)
         while table.exists():
             table.reload()
             time.sleep(5)
@@ -156,3 +162,17 @@ class BigQueryTestCase(unittest.TestCase):
     def _table(self, table_name, *args, **kwargs):
         return self._bigquery_client.dataset(self.dataset).table(
             table_name, *args, **kwargs)
+
+
+        while query.job.state != 'DONE':
+            query.job.reload()
+
+
+# until google fixes https://github.com/GoogleCloudPlatform/google-cloud-python/issues/2354
+def query_fetch_data(client, query):
+    path = '/projects/%s/queries/%s' % (query.project, query.name)
+    params = {}
+    response = client.connection.api_request(
+        method='GET', path=path, query_params=params)
+
+    query._set_properties(response)

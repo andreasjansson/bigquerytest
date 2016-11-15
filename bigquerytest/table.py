@@ -22,6 +22,7 @@ PRIMITIVE_CONVERTERS = {
     'string': or_null(lambda s: s),
     'integer': or_null(int),
     'boolean': or_null(lambda s: s.lower().startswith('t')),
+    'float': or_null(float),
 }
 
 
@@ -120,6 +121,11 @@ def table_from_definition_string(table_definition, schema):
     records = []
     record = None
     for row in table_definition.strip('\n').splitlines():
+
+        # comments start with #, empty lines are ignored
+        if row.strip().startswith('#') or not row.strip():
+            continue
+
         if '\t' in row:
             raise ValueError('Please use spaces instead of tabs')
 
@@ -221,7 +227,7 @@ def update_record(schema, parsed_row, record):
 
 
 def update_record_for_field(field, parsed_row, record):
-    if field.type not in ('string', 'integer', 'boolean', 'record'):
+    if field.type not in PRIMITIVE_CONVERTERS:
         raise ValueError('Field type not supported: %s' % field.type)
 
     value = None
