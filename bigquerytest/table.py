@@ -25,6 +25,8 @@ PRIMITIVE_CONVERTERS = {
     'float': or_null(float),
 }
 
+SUPPORTED_TYPES = set(PRIMITIVE_CONVERTERS) | set(["record"])
+
 
 class BigQueryTestTable(object):
 
@@ -227,7 +229,7 @@ def update_record(schema, parsed_row, record):
 
 
 def update_record_for_field(field, parsed_row, record):
-    if field.type not in PRIMITIVE_CONVERTERS:
+    if field.type not in SUPPORTED_TYPES:
         raise ValueError('Field type not supported: %s' % field.type)
 
     value = None
