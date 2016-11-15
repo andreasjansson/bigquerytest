@@ -42,9 +42,11 @@ class BigQueryTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(BigQueryTestCase, self).__init__(*args, **kwargs)
         self.addTypeEqualityFunc(BigQueryTestTable, 'assert_tables_equal')
-        self._mock_tables = {}
         self._bigquery_client = bigquery.Client(project=self.project)
         self._log = logging.getLogger('bigquerytest')
+
+    def setUp(self):
+        self._mock_tables = {}
 
     def mock_table(self, table_id, table_definition, cleanup=True):
         schema = self._load_schema(table_id)
@@ -58,6 +60,7 @@ class BigQueryTestCase(unittest.TestCase):
 
     def query(self, sql):
         sql = self._replace_tables_in_query(sql)
+        self._log.debug(sql)
         query = self._bigquery_client.run_sync_query(sql)
         query.use_legacy_sql = self.use_legacy_sql
         query.run()
@@ -144,6 +147,8 @@ class BigQueryTestCase(unittest.TestCase):
                 if (sql_project == project and sql_dataset == dataset and
                     sql_table == table):
                     replacements[sql[start:end]] = mock_table_id
+                else:
+                    self._log.info('Not mocking table: %s' % sql[start:end])
 
         for string, replacement in replacements.items():
             sql = sql.replace(string, replacement)

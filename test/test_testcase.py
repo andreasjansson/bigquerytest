@@ -40,7 +40,7 @@ class TestBigQueryTestCase(unittest.TestCase):
                 `my-project.my_dataset.mock4`
         '''
 
-        self.assertMultiLineEqual(test._replace_tables_in_query(sql), expected,)
+        self.assertMultiLineEqual(test._replace_tables_in_query(sql), expected)
 
     def test_replace_tables_in_query_legacy(self):
         test = BigQueryTestCaseLegacyDummy()
@@ -58,4 +58,4 @@ class TestBigQueryTestCase(unittest.TestCase):
                 [my-project:my_dataset.mock1]
         '''
 
-        self.assertMultiLineEqual(test._replace_tables_in_query(sql), expected,)
+        self.assertMultiLineEqual(test._replace_tables_in_query(sql), expected)
