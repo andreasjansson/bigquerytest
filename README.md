@@ -1,5 +1,9 @@
 # bigquerytest
 
+[![Build Status](https://travis-ci.org/andreasjansson/bigquerytest.svg?branch=master)](https://travis-ci.org/andreasjansson/bigquerytest)
+
+[![PyPI version](https://badge.fury.io/py/bigquerytest.svg)](https://badge.fury.io/py/bigquerytest)
+
 Test complicated BigQuery SQL by mocking tables with deterministic, readable data.
 
 ## Usage by example
