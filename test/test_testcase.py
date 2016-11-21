@@ -1,12 +1,13 @@
 import unittest
 from bigquerytest.testcase import BigQueryTestCase
+from mock import patch
 
 
 class BigQueryTestCaseDummy(BigQueryTestCase):
     project = 'my-project'
     dataset = 'my_dataset'
     def __init__(self):
-        super(BigQueryTestCase, self).__init__(methodName='__class__')
+        super(BigQueryTestCaseDummy, self).__init__(methodName='__class__')
 
 
 class BigQueryTestCaseLegacyDummy(BigQueryTestCaseDummy):
@@ -15,7 +16,8 @@ class BigQueryTestCaseLegacyDummy(BigQueryTestCaseDummy):
 
 class TestBigQueryTestCase(unittest.TestCase):
 
-    def test_replace_tables_in_query(self):
+    @patch('google.cloud.bigquery.Client')
+    def test_replace_tables_in_query(self, mock_bigquery_client):
         test = BigQueryTestCaseDummy()
         test._mock_tables = {
             '`abc.def.ghi`': 'mock1',
@@ -42,7 +44,8 @@ class TestBigQueryTestCase(unittest.TestCase):
 
         self.assertMultiLineEqual(test._replace_tables_in_query(sql), expected)
 
-    def test_replace_tables_in_query_legacy(self):
+    @patch('google.cloud.bigquery.Client')
+    def test_replace_tables_in_query_legacy(self, mock_bigquery_client):
         test = BigQueryTestCaseLegacyDummy()
         test._mock_tables = {
             '`abc.def`': 'mock1',

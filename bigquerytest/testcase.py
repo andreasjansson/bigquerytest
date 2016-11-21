@@ -148,7 +148,7 @@ class BigQueryTestCase(unittest.TestCase):
                     sql_table == table):
                     replacements[sql[start:end]] = mock_table_id
                 else:
-                    self._log.info('Not mocking table: %s' % sql[start:end])
+                    self._log.info('Not mocking table: %s', sql[start:end])
 
         for string, replacement in replacements.items():
             sql = sql.replace(string, replacement)
