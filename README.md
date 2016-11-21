@@ -76,3 +76,7 @@ class TestGithubQuery(BigQueryTestCase):
 ```
 pip install bigquerytest
 ```
+
+## Requirements
+
+Python 2.7 or above.
