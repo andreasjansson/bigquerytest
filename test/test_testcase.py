@@ -23,7 +23,7 @@ class TestBigQueryTestCase(unittest.TestCase):
             '`abc.def.ghi`': 'mock1',
             '[jkl:mno.pqr]': 'mock2',
             '`suv.wxy`': 'mock3',
-            'my-project.abc.def': 'mock4',
+            'my-project.abc.xxx': 'mock4',
         }
 
         sql = '''
@@ -31,7 +31,7 @@ class TestBigQueryTestCase(unittest.TestCase):
                 abc.def.ghi,
                 `jkl.mno.pqr`,
                 [my-project:suv.wxy],
-                abc.def
+                abc.xxx
         '''
 
         expected = '''
