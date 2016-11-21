@@ -1,7 +1,10 @@
 from __future__ import absolute_import
 import logging
 import json
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import re
 import time
 import unittest
