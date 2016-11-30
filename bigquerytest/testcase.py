@@ -181,7 +181,7 @@ class BigQueryTestCase(unittest.TestCase):
 def query_fetch_data(client, query):
     path = '/projects/%s/queries/%s' % (query.project, query.name)
     params = {}
-    response = client.connection.api_request(
+    response = client._connection.api_request(
         method='GET', path=path, query_params=params)
 
     query._set_properties(response)
