@@ -151,8 +151,7 @@ class BigQueryTestCase(unittest.TestCase):
                 if (sql_project == project and sql_dataset == dataset and
                     sql_table == table):
                     replacements[sql[start:end]] = mock_table_id
-                else:
-                    self._log.info('Not mocking table: %s', sql[start:end])
+                    self._log.info('Mocking table: %s', sql[start:end])
 
         for string, replacement in replacements.items():
             sql = sql.replace(string, replacement)
@@ -171,10 +170,6 @@ class BigQueryTestCase(unittest.TestCase):
     def _table(self, table_name, *args, **kwargs):
         return self._bigquery_client.dataset(self.dataset).table(
             table_name, *args, **kwargs)
-
-
-        while query.job.state != 'DONE':
-            query.job.reload()
 
 
 # until google fixes https://github.com/GoogleCloudPlatform/google-cloud-python/issues/2354

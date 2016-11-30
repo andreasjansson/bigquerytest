@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='bigquerytest',
-    version='0.1.5',
+    version='0.1.6',
     author='Andreas Jansson',
     author_email='andreas@jansson.me.uk',
     description='unittest TestCase with BigQuery table mocks in human-readable format',
